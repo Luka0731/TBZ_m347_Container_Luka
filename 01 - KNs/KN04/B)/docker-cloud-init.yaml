@@ -1,0 +1,44 @@
+#cloud-config
+users:
+  - name: ubuntu
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcmlVu7Mw9NhRS04QLVCf9cP3+4uOA/TBjiTvnGP4qj luka.grujic@noseryoung.com
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCUBo+qnNu5xxM9vfz4C04M36FHxHNrEMdm5TkFj1/SfVtqunlUOeMpu7nFCZZKnX8HYwf/MkjcBiTYAgncxku8grwl6XuW/pcvmb6/ghSIaw4xtRRSzit7omqJ5d8kXB3+Nd1aaMHsjfly4nkaqswhySVXQqr8Hw6DbWVw8jLLVKEE+5NZHY33hJkhJwK4blCllsGpmQaKi1qxjsN0hZOWNK01iJAydwD8t2xJ0NOYbq8Qas5IyPnRN7SPxvEhIP6WLQ6Ym6Dmf8FwNW1cHLTKabgjzt5f/HKUkKS89dPd3fn4nnFli1BOMECGUIvVlOw2pQNri7+04OOfn2FGlqr5
+
+write_files:
+  - path: /home/ubuntu/docker-compose.yml
+    content: |
+      services:
+        m347-kn04-db:
+          image: mariadb:latest
+          container_name: m347-kn04-db
+          environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: mydb
+          networks:
+            kn04-network:
+
+        m347-kn04-web:
+          image: luka0731/m347:kn02-web
+          container_name: m347-kn04-web
+          ports:
+            - "80:80"
+          depends_on:
+            - m347-kn04-db
+          networks:
+            kn04-network:
+
+      networks:
+        kn04-network:
+          ipam:
+            config:
+              - subnet: 172.20.0.0/16
+                ip_range: 172.20.5.0/24
+                gateway: 172.20.5.254
+
+runcmd:
+  - apt-get update
+  - apt-get install -y docker.io docker-compose-v2
+  - docker compose -f /home/ubuntu/docker-compose.yml up -d
+
+final_message: "Setup complete"
