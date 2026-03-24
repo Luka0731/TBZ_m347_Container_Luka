@@ -1,0 +1,26 @@
+name: kn05-c
+
+volumes:
+  kn05-named-vol:
+
+services:
+  nginx1:
+    image: nginx
+    volumes:
+      # Named Volume - Long Syntax
+      - type: volume
+        source: kn05-named-vol
+        target: /data
+      # Bind Mount
+      - type: bind
+        source: ./bindmount
+        target: /usr/share/nginx/html
+      # tmpfs
+      - type: tmpfs
+        target: /tmp/tmpfs
+
+  nginx2:
+    image: nginx
+    volumes:
+      # Named Volume - Short Syntax
+      - kn05-named-vol:/data
