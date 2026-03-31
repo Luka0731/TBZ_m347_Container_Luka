@@ -7,11 +7,11 @@ services:
   nginx1:
     image: nginx
     volumes:
-      # Named Volume - Long Syntax
+      # volume (long syntax version)
       - type: volume
         source: kn05-named-vol
         target: /data
-      # Bind Mount
+      # bind mount
       - type: bind
         source: ./bindmount
         target: /usr/share/nginx/html
@@ -22,5 +22,5 @@ services:
   nginx2:
     image: nginx
     volumes:
-      # Named Volume - Short Syntax
+      # volume (short syntax version)
       - kn05-named-vol:/data
